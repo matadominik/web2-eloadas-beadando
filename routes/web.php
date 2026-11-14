@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\Auth2;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 
@@ -18,4 +19,5 @@ require __DIR__.'/auth.php';
 Route::get('exercise1', function () { return view('view1'); });
 Route::get('introduction', function () { return view('introduction'); });
 Route::get('contact', function () { return view('contact'); });
+Route::post('contact', [ContactController::class, 'store']);
 
