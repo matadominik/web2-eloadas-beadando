@@ -19,4 +19,11 @@ class ContactController extends Controller
 
         return redirect('contact')->with('success', 'Message sent!');
     }
+
+    public function getMessages()
+    {
+        $message_array = Message::orderBy('created_at', 'desc')->get();
+
+        return view('messages', compact('message_array'));
+    }
 }
