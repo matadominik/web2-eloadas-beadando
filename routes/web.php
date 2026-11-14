@@ -9,7 +9,7 @@ Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {return Inertia::render('dashboard');})->name('dashboard');
-    Route::get('messages', function () { return view('messages'); })->name("messages");
+    Route::get('messages', [ContactController::class, 'getMessages']);
     Route::get('admin', 'App\Http\Controllers\AdminController@adminPage');
 });
 
