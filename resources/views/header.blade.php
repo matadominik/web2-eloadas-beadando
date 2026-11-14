@@ -4,8 +4,9 @@
     <a href="/dashboard">Dashboard</a>
   @endif
   <a href="/introduction">Introduction</a>
+  <a href="/contact">Contact</a>
   @if (Auth::check())
-    <a href="/user">User</a>
+    <a href="/messages">Messages</a>
     @if (Auth::User()->role==1)
       <a href='/admin'>Admin</a>
     @endif
