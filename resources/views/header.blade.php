@@ -5,6 +5,7 @@
   @endif
   <a href="/introduction">Introduction</a>
   <a href="/contact">Contact</a>
+  <a href="/gradebook">Gradebook</a>
   @if (Auth::check())
     <a href="/messages">Messages</a>
     @if (Auth::User()->role==1)

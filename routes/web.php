@@ -1,9 +1,11 @@
 <?php
 
+use Illuminate\Database\Console\DatabaseInspectionCommand;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Middleware\Auth2;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DatabaseController;
 
 Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 
@@ -20,4 +22,5 @@ Route::get('exercise1', function () { return view('view1'); });
 Route::get('introduction', function () { return view('introduction'); });
 Route::get('contact', function () { return view('contact'); });
 Route::post('contact', [ContactController::class, 'store']);
+Route::get('gradebook', [DatabaseController::class, 'getDatas']);
 
