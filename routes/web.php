@@ -23,4 +23,5 @@ Route::get('introduction', function () { return view('introduction'); });
 Route::get('contact', function () { return view('contact'); });
 Route::post('contact', [ContactController::class, 'store']);
 Route::get('gradebook', [DatabaseController::class, 'getDatas']);
+Route::get('stats', function () { return view('stats'); });
 
