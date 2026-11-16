@@ -26,6 +26,6 @@ Route::get('contact', function () { return view('contact'); });
 Route::post('contact', [ContactController::class, 'store']);
 Route::get('gradebook', [DatabaseController::class, 'getDatas']);
 Route::get('stats', [ChartController::class, 'getDatas']);
-Route::resource('crud', StudentController::class)->parameters([
-    'crud' => 'diak'
-]);
+Route::resource('crud', StudentController::class)
+    ->except(['show'])
+    ->parameters(['crud' => 'diak']);
