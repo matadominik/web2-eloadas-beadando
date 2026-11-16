@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Middleware\Auth2;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\ChartController;
 
 Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 
@@ -23,5 +24,5 @@ Route::get('introduction', function () { return view('introduction'); });
 Route::get('contact', function () { return view('contact'); });
 Route::post('contact', [ContactController::class, 'store']);
 Route::get('gradebook', [DatabaseController::class, 'getDatas']);
-Route::get('stats', function () { return view('stats'); });
+Route::get('stats', [ChartController::class, 'getDatas']);
 
