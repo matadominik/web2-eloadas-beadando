@@ -1,6 +1,31 @@
 <x-mainpage>
-  <h1>stats page</h1>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-  Nunc pellentesque posuere nunc, at laoreet augue. Donec
-  ultricies eu mi sit amet dictum. Maecenas ut posuere
+  <h1>Grades</h1>
+  
+  <canvas id="jegyChart"></canvas>
 </x-mainpage>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const labels = @json($labels);
+  const values = @json($values);
+
+  const context = document.getElementById('jegyChart');
+
+  new Chart(context, {
+    type: 'bar',
+
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Count of grades',
+        data: values,
+        borderWidth: 1
+      }]
+    },
+
+    options: {
+      responsive: true
+    }
+  });
+</script>
