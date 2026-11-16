@@ -3,14 +3,14 @@
   @if (Auth::check())
     <a href="/dashboard">Dashboard</a>
   @endif
-  <a href="/introduction">Introduction</a>
+  <a href="/home">Home</a>
   <a href="/contact">Contact</a>
   <a href="/gradebook">Gradebook</a>
   <a href="/stats">Stats</a>
   @if (Auth::check())
     <a href="/messages">Messages</a>
     @if (Auth::User()->role==1)
-      <a href='/admin'>Admin</a>
+    <a href="/crud">Crud</a>
     @endif
     <form method="post" action="/logout" style="display:inline;">
       @csrf                
