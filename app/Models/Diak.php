@@ -13,4 +13,10 @@ class Diak extends Model
     {
         return $this->hasMany(Jegy::class, 'diakid');
     }
+
+    protected $fillable = [
+        'nev',
+        'osztaly',
+        'fiu'
+    ];
 }

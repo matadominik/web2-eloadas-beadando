@@ -3,10 +3,11 @@
   @if (Auth::check())
     <a href="/dashboard">Dashboard</a>
   @endif
-  <a href="/introduction">Introduction</a>
+  <a href="/home">Home</a>
   <a href="/contact">Contact</a>
   <a href="/gradebook">Gradebook</a>
   <a href="/stats">Stats</a>
+  <a href="/crud">Crud</a>
   @if (Auth::check())
     <a href="/messages">Messages</a>
     @if (Auth::User()->role==1)
