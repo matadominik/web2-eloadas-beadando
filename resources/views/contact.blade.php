@@ -57,8 +57,7 @@
                         <div class="ec-contact-success">
                             <span>✓</span>
                             <div>
-                                <strong>Message sent successfully!</strong>
-                                <p>{{ session('success') }}</p>
+                                <strong>Your message has been sent successfully!</strong>
                             </div>
                         </div>
                     @endif
