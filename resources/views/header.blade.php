@@ -41,6 +41,11 @@
                     Contact
                 </a>
 
+                <a href="{{ url('/test-menu') }}"
+                   class="{{ request()->is('test-menu*') ? 'active' : '' }}">
+                    Test Menu
+                </a>
+
                 @auth
                     <a href="{{ url('/messages') }}"
                        class="{{ request()->is('messages') ? 'active' : '' }}">

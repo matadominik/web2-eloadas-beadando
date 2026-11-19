@@ -1,0 +1,22 @@
+NEXT COMMIT: CALCULATION LAB + TESTS
+
+This ZIP is a full project snapshot. Extract/copy it over your existing project folder.
+Do not replace your .git folder or your local .env file; these are intentionally not included.
+After copying, install dependencies if needed:
+  composer install
+  npm install
+Run:
+  php artisan test
+
+Suggested commit message:
+  Add Calculation Lab with unit and feature tests
+
+Implemented:
+- Public Test Menu navigation
+- Four-operation calculator (add, subtract, multiply, divide)
+- Server-side validation and division-by-zero handling
+- Calculator service isolated for unit tests
+- 7 Unit tests
+- 8 Feature tests
+- Responsive UI styling
+- README section documenting the extra feature

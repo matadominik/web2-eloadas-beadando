@@ -6,6 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\ChartController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TestMenuController;
 
 Route::get('/', function () {
     return view('home');
@@ -45,6 +46,10 @@ Route::post('contact', [ContactController::class, 'store']);
 Route::get('gradebook', [DatabaseController::class, 'getDatas']);
 
 Route::get('stats', [ChartController::class, 'getDatas']);
+
+Route::get('test-menu', [TestMenuController::class, 'index'])->name('test-menu.index');
+Route::post('test-menu/calculate', [TestMenuController::class, 'calculate'])->name('test-menu.calculate');
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
