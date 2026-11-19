@@ -29,3 +29,15 @@ Run the test suite after installing dependencies:
 ```bash
 php artisan test
 ```
+
+## Student CRUD API tests
+
+The React student administration interface uses the Laravel JSON endpoints. Feature tests cover the API's list, create, update and delete operations, validation, and role-based access.
+
+- Admin access: tested for CRUD operations
+- Validation: create and update requests
+- Authorization: guests and non-admin users
+- Empty list response
+- Data integrity after forbidden requests
+
+The API test file is `tests/Feature/StudentCrudApiTest.php`.

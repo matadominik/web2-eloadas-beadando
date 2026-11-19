@@ -74,3 +74,73 @@ test('non admin cannot access the student json endpoints', function () {
 test('guest cannot access the student json endpoints', function () {
     $this->get('/students/data')->assertRedirect('/login');
 });
+
+
+test('admin can update student data with validated fields', function () {
+    $admin = createStudentCrudAdmin();
+    $student = Diak::create(['nev' => 'Before Update', 'osztaly' => '9/A', 'fiu' => 0]);
+
+    $this->actingAs($admin)->putJson('/students/'.$student->id, [
+        'nev' => 'After Update',
+        'osztaly' => '10/C',
+        'fiu' => 1,
+    ])->assertOk()->assertJsonFragment([
+        'nev' => 'After Update',
+        'osztaly' => '10/C',
+        'fiu' => 1,
+    ]);
+
+    expect($student->fresh()->osztaly)->toBe('10/C');
+});
+
+test('student update validates all required fields', function () {
+    $admin = createStudentCrudAdmin();
+    $student = Diak::create(['nev' => 'Validation Student', 'osztaly' => '9/A', 'fiu' => 0]);
+
+    $this->actingAs($admin)->putJson('/students/'.$student->id, [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['nev', 'osztaly', 'fiu']);
+});
+
+test('non admin cannot create students', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->postJson('/students', [
+        'nev' => 'Forbidden Student',
+        'osztaly' => '10/A',
+        'fiu' => 1,
+    ])->assertRedirect('/messages');
+
+    expect(Diak::where('nev', 'Forbidden Student')->exists())->toBeFalse();
+});
+
+test('non admin cannot update students', function () {
+    $user = User::factory()->create();
+    $student = Diak::create(['nev' => 'Protected Student', 'osztaly' => '10/A', 'fiu' => 0]);
+
+    $this->actingAs($user)->putJson('/students/'.$student->id, [
+        'nev' => 'Tampered Student',
+        'osztaly' => '11/A',
+        'fiu' => 1,
+    ])->assertRedirect('/messages');
+
+    expect($student->fresh()->nev)->toBe('Protected Student');
+});
+
+test('non admin cannot delete students', function () {
+    $user = User::factory()->create();
+    $student = Diak::create(['nev' => 'Protected Delete', 'osztaly' => '10/A', 'fiu' => 0]);
+
+    $this->actingAs($user)->deleteJson('/students/'.$student->id)
+        ->assertRedirect('/messages');
+
+    expect(Diak::find($student->id))->not->toBeNull();
+});
+
+test('student list endpoint returns an empty json array when no students exist', function () {
+    $admin = createStudentCrudAdmin();
+
+    $this->actingAs($admin)->getJson('/students/data')
+        ->assertOk()
+        ->assertExactJson([]);
+});

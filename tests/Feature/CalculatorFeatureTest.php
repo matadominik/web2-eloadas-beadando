@@ -1,7 +1,5 @@
 <?php
 
-use App\Services\CalculatorService;
-
 test('test menu page is available', function () {
     $this->get('/test-menu')->assertOk()->assertSee('Calculation Lab');
 });
