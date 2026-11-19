@@ -2397,3 +2397,100 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Student directory filtering, sorting and export controls */
+.ec-react-toolbar-advanced {
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.ec-react-filter {
+    display: flex;
+    min-width: 145px;
+    flex-direction: column;
+    gap: 8px;
+    color: #5f6d82;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ec-react-filter select {
+    min-height: 46px;
+    padding: 10px 12px;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    background: #fff;
+    color: #18253c;
+}
+
+.ec-react-filter select:focus {
+    border-color: #4169e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, .12);
+}
+
+
+.ec-react-toolbar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+
+.ec-react-secondary-button,
+.ec-react-sort-button {
+    border: 1px solid #dbe3ef;
+    border-radius: 9px;
+    background: #fff;
+    color: #3b4b63;
+    font: inherit;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, color .2s;
+}
+
+
+.ec-react-secondary-button {
+    min-height: 42px;
+    padding: 9px 13px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ec-react-secondary-button:hover:not(:disabled) {
+    border-color: #4169e1;
+    background: #f5f7ff;
+    color: #3157c9;
+}
+.ec-react-secondary-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.ec-react-sort-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+.ec-react-sort-button:hover {
+    color: #3157c9;
+}
+
+@media (max-width: 767px) {
+    .ec-react-toolbar-advanced {
+        align-items: stretch;
+    }
+    .ec-react-filter {
+        min-width: calc(50% - 9px);
+        flex: 1;
+    }
+    .ec-react-toolbar-actions {
+        width: 100%;
+    }
+    .ec-react-toolbar-actions button {
+        flex: 1;
+    }
+}

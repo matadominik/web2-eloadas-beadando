@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type Student = {
     id: number;
@@ -19,6 +19,10 @@ const emptyForm: StudentForm = { nev: '', osztaly: '', fiu: false };
 export default function StudentCrud() {
     const [students, setStudents] = useState<Student[]>([]);
     const [search, setSearch] = useState('');
+    const [classFilter, setClassFilter] = useState('');
+    const [genderFilter, setGenderFilter] = useState('');
+    const [sortKey, setSortKey] = useState<'id' | 'nev' | 'osztaly'>('id');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [form, setForm] = useState<StudentForm>(emptyForm);
     const [editing, setEditing] = useState<Student | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -26,15 +30,55 @@ export default function StudentCrud() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const addButtonRef = useRef<HTMLButtonElement>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    const classOptions = useMemo(
+        () => Array.from(new Set(students.map((student) => student.osztaly.trim()).filter(Boolean))).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })),
+        [students],
+    );
 
     const filteredStudents = useMemo(() => {
         const query = search.trim().toLowerCase();
-        if (!query) return students;
-        return students.filter((student) =>
-            [student.id.toString(), student.nev, student.osztaly]
-                .some((value) => value.toLowerCase().includes(query)),
-        );
-    }, [students, search]);
+        return students
+            .filter((student) => !query || [student.id.toString(), student.nev, student.osztaly].some((value) => value.toLowerCase().includes(query)))
+            .filter((student) => !classFilter || student.osztaly === classFilter)
+            .filter((student) => genderFilter === '' || Boolean(student.fiu) === (genderFilter === 'boy'))
+            .sort((a, b) => {
+                const comparison = sortKey === 'id'
+                    ? a.id - b.id
+                    : a[sortKey].localeCompare(b[sortKey], undefined, { numeric: true, sensitivity: 'base' });
+                return sortDirection === 'asc' ? comparison : -comparison;
+            });
+    }, [students, search, classFilter, genderFilter, sortKey, sortDirection]);
+
+    function toggleSort(key: 'id' | 'nev' | 'osztaly') {
+        if (sortKey === key) setSortDirection((direction) => direction === 'asc' ? 'desc' : 'asc');
+        else {
+            setSortKey(key);
+            setSortDirection('asc');
+        }
+    }
+
+    function resetFilters() {
+        setSearch('');
+        setClassFilter('');
+        setGenderFilter('');
+        setSortKey('id');
+        setSortDirection('asc');
+    }
+
+    function exportCsv() {
+        const rows = [['ID', 'Student name', 'Class', 'Gender'], ...filteredStudents.map((student) => [student.id, student.nev, student.osztaly, student.fiu ? 'Boy' : 'Girl'])];
+        const csv = rows.map((row) => row.map((value) => `\"${String(value).replace(/\"/g, '\"\"')}\"`).join(',')).join('\r\n');
+        const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'students.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+    }
 
     async function loadStudents() {
         setLoading(true);
@@ -52,6 +96,40 @@ export default function StudentCrud() {
     useEffect(() => {
         void loadStudents();
     }, []);
+
+    useEffect(() => {
+        if (!modalOpen) return;
+
+        const focusableSelector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+        const modal = modalRef.current;
+        const firstInput = modal?.querySelector<HTMLInputElement>('input:not([type=checkbox])');
+        firstInput?.focus();
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closeModal();
+                return;
+            }
+
+            if (event.key !== 'Tab' || !modal) return;
+            const focusable = Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector));
+            if (focusable.length === 0) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [modalOpen, saving]);
 
     function openCreate() {
         setEditing(null);
@@ -75,6 +153,7 @@ export default function StudentCrud() {
         setEditing(null);
         setForm(emptyForm);
         setFieldErrors({});
+        addButtonRef.current?.focus();
     }
 
     async function saveStudent(event: React.FormEvent<HTMLFormElement>) {
@@ -92,6 +171,7 @@ export default function StudentCrud() {
             setModalOpen(false);
             setEditing(null);
             setForm(emptyForm);
+            addButtonRef.current?.focus();
             await loadStudents();
         } catch (exception: any) {
             if (exception.response?.status === 422) {
@@ -127,7 +207,7 @@ export default function StudentCrud() {
                         <h1>Students</h1>
                         <p>Manage student records and class information.</p>
                     </div>
-                    <button type="button" className="ec-students-add-button" onClick={openCreate}>
+                    <button ref={addButtonRef} type="button" className="ec-students-add-button" onClick={openCreate}>
                         <span>+</span> Add student
                     </button>
                 </div>
@@ -140,17 +220,31 @@ export default function StudentCrud() {
                         </div>
                     </div>
 
-                    <div className="ec-react-toolbar">
+                    <div className="ec-react-toolbar ec-react-toolbar-advanced">
                         <label className="ec-react-search">
                             Search students
-                            <input
-                                type="search"
-                                value={search}
-                                onChange={(event) => setSearch(event.target.value)}
-                                placeholder="Name, class or ID…"
-                            />
+                            <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Name, class or ID…" />
                         </label>
-                        <span className="ec-react-result-count">{filteredStudents.length} result{filteredStudents.length === 1 ? '' : 's'}</span>
+                        <label className="ec-react-filter">
+                            Class
+                            <select value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
+                                <option value="">All classes</option>
+                                {classOptions.map((className) => <option key={className} value={className}>{className}</option>)}
+                            </select>
+                        </label>
+                        <label className="ec-react-filter">
+                            Gender
+                            <select value={genderFilter} onChange={(event) => setGenderFilter(event.target.value)}>
+                                <option value="">All</option>
+                                <option value="boy">Boy</option>
+                                <option value="girl">Girl</option>
+                            </select>
+                        </label>
+                        <div className="ec-react-toolbar-actions">
+                            <button type="button" className="ec-react-secondary-button" onClick={resetFilters}>Reset</button>
+                            <button type="button" className="ec-react-secondary-button" onClick={exportCsv} disabled={filteredStudents.length === 0}>Export CSV</button>
+                        </div>
+                        <span className="ec-react-result-count">{filteredStudents.length} of {students.length} student{students.length === 1 ? '' : 's'}</span>
                     </div>
 
                     {error && <div className="ec-react-error-banner" role="alert">{error}</div>}
@@ -159,9 +253,9 @@ export default function StudentCrud() {
                         <table className="ec-students-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Student name</th>
-                                    <th>Class</th>
+                                    <th><button type="button" className="ec-react-sort-button" onClick={() => toggleSort('id')}>ID {sortKey === 'id' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</button></th>
+                                    <th><button type="button" className="ec-react-sort-button" onClick={() => toggleSort('nev')}>Student name {sortKey === 'nev' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</button></th>
+                                    <th><button type="button" className="ec-react-sort-button" onClick={() => toggleSort('osztaly')}>Class {sortKey === 'osztaly' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</button></th>
                                     <th>Gender</th>
                                     <th className="ec-students-actions-heading">Actions</th>
                                 </tr>
@@ -207,11 +301,12 @@ export default function StudentCrud() {
 
             {modalOpen && (
                 <div className="ec-react-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && closeModal()}>
-                    <div className="ec-react-modal" role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
+                    <div ref={modalRef} className="ec-react-modal" role="dialog" aria-modal="true" aria-labelledby="student-modal-title" aria-describedby="student-modal-description">
                         <div className="ec-react-modal-header">
                             <div>
                                 <span className="ec-section-label">Student information</span>
                                 <h2 id="student-modal-title">{editing ? 'Edit student' : 'Add a new student'}</h2>
+                                <p id="student-modal-description">Enter the student's name, class and gender.</p>
                             </div>
                             <button type="button" className="ec-react-modal-close" onClick={closeModal} aria-label="Close dialog">×</button>
                         </div>
