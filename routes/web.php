@@ -26,6 +26,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('crud', StudentController::class)
             ->except(['show'])
             ->parameters(['crud' => 'diak']);
+
+        Route::prefix('students')->group(function () {
+            Route::get('/data', [StudentController::class, 'apiIndex'])->name('students.data');
+            Route::post('/', [StudentController::class, 'apiStore'])->name('students.store');
+            Route::put('/{diak}', [StudentController::class, 'apiUpdate'])->name('students.update');
+            Route::delete('/{diak}', [StudentController::class, 'apiDestroy'])->name('students.destroy');
+        });
     });
 });
 

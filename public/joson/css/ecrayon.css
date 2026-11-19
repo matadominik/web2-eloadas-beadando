@@ -2150,3 +2150,56 @@ body {
         flex-wrap: wrap;
     }
 }
+
+.ec-react-result-count {
+    align-self: center;
+    color: #66758a;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.ec-react-checkbox-label {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px !important;
+}
+
+.ec-react-checkbox-label input {
+    width: 18px;
+    min-height: 18px;
+    accent-color: #4169e1;
+}
+
+.ec-react-student-crud .ec-react-error-banner {
+    margin: 0 24px 18px;
+}
+
+.ec-react-loading {
+    padding: 40px !important;
+    text-align: center;
+    color: #6b7b91;
+}
+
+.ec-students-actions .ec-student-edit-button,
+.ec-students-actions .ec-student-delete-button {
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .ec-react-result-count {
+        align-self: flex-start;
+    }
+
+    .ec-react-modal-backdrop {
+        padding: 10px;
+    }
+
+    .ec-react-modal {
+        max-height: calc(100vh - 20px);
+        padding: 18px;
+    }
+
+    .ec-react-form-actions {
+        flex-direction: column-reverse;
+    }
+}

@@ -49,9 +49,10 @@
                     </div>
 
                     <div class="ec-footer-info">
-                        <h4>E-Crayon</h4>
+                        <h4>Project authors</h4>
+                        <p>Mata László Dominik — B223VA</p>
+                        <p>Fazekas Bence — ZK6FMO</p>
                         <p>Web Programming II Project</p>
-                        <p>Laravel-based web application</p>
                     </div>
                 </div>
 
