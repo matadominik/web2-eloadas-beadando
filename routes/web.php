@@ -17,16 +17,21 @@ Route::get('/home', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return redirect()->route('students.index');
     })->name('dashboard');
 
     Route::get('messages', [ContactController::class, 'getMessages']);
 
     Route::middleware(['admin'])->group(function () {
+
         Route::resource('crud', StudentController::class)
             ->except(['show'])
             ->parameters(['crud' => 'diak']);
+
+        Route::get('/students', [StudentController::class, 'index'])
+            ->name('students.index');
 
         Route::prefix('students')->group(function () {
             Route::get('/data', [StudentController::class, 'apiIndex'])->name('students.data');
@@ -49,7 +54,6 @@ Route::get('stats', [ChartController::class, 'getDatas']);
 
 Route::get('test-menu', [TestMenuController::class, 'index'])->name('test-menu.index');
 Route::post('test-menu/calculate', [TestMenuController::class, 'calculate'])->name('test-menu.calculate');
-
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

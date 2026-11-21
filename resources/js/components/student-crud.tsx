@@ -279,8 +279,8 @@ export default function StudentCrud() {
                                         <td><span className="ec-student-id">{student.id}</span></td>
                                         <td>
                                             <div className="ec-student-name-cell">
-                                                <div className="ec-student-avatar">{student.nev.trim().charAt(0).toUpperCase()}</div>
-                                                <span>{student.nev}</span>
+                                                
+                                                <span>{student.nev.trim().replace(/^[A-Z]\s+/, '')}</span>
                                             </div>
                                         </td>
                                         <td><span className="ec-student-class">{student.osztaly}</span></td>

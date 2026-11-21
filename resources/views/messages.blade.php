@@ -3,17 +3,20 @@
         <div class="container">
             <div class="ec-messages-header">
                 <div>
-                    <span class="ec-section-label">Communication</span>
+                    <span class="ec-section-label">COMMUNICATION CENTER</span>
                     <h1>Messages</h1>
-                    <p>Review messages submitted through the contact form.</p>
+                    <p>Manage and review messages submitted through the contact form.</p>
                 </div>
 
-                <div class="ec-messages-header-icon">✉</div>
+                <div class="ec-messages-header-icon">
+                    ✉
+                </div>
             </div>
 
             <div class="ec-messages-card">
                 <div class="ec-messages-card-header">
                     <div>
+                        <span class="ec-section-label">INBOX</span>
                         <h2>Received messages</h2>
                         <p>Contact form submissions</p>
                     </div>
@@ -42,12 +45,22 @@
                                             {{ $message->created_at->format('Y-m-d H:i') }}
                                         </span>
                                     </td>
-                                    <td>{{ $message->full_name }}</td>
+
                                     <td>
-                                        <a href="mailto:{{ $message->email_address }}">
+                                        <div class="ec-message-name">
+                                            {{ $message->full_name }}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            class="ec-message-email"
+                                            href="mailto:{{ $message->email_address }}"
+                                        >
                                             {{ $message->email_address }}
                                         </a>
                                     </td>
+
                                     <td>
                                         <div class="ec-message-content">
                                             {{ $message->message }}
@@ -58,9 +71,15 @@
                                 <tr>
                                     <td colspan="4">
                                         <div class="ec-messages-empty">
-                                            <span>✉</span>
+                                            <div class="ec-messages-empty-icon">
+                                                ✉
+                                            </div>
+
                                             <h3>No messages yet</h3>
-                                            <p>Contact form submissions will appear here.</p>
+
+                                            <p>
+                                                Contact form submissions will appear here.
+                                            </p>
                                         </div>
                                     </td>
                                 </tr>
